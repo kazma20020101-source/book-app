@@ -119,7 +119,7 @@ if not std_fields:
 default_mapping = pick_default_mapping(raw_df.columns.tolist(), schema_cfg.get("default_column_mapping", {}))
 
 mapping = {}
-with st.expander("列マッピング（必要に応じて調整）", expanded=False):
+with st.expander("列マッピング（基本的には触らない）", expanded=False):
     for field in std_fields:
         cols = [""] + raw_df.columns.tolist()
         default = default_mapping.get(field, "")

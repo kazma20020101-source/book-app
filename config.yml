@@ -1,6 +1,6 @@
 app:
-  title: "考古学研究室リテラボ蔵書アプリ"
-  description: "蔵書の検索と関連図書の提案を行うアプリです。"
+  title: "名大考古OPAC"
+  description: "名古屋大学考古学研究室の蔵書・論文検索を行うアプリです"
 
 auth:
   enabled: false
