@@ -119,16 +119,12 @@ if not std_fields:
 default_mapping = pick_default_mapping(raw_df.columns.tolist(), schema_cfg.get("default_column_mapping", {}))
 
 mapping = {}
-with st.expander("列マッピング（基本的には触らない）", expanded=False):
-    for field in std_fields:
-        cols = [""] + raw_df.columns.tolist()
-        default = default_mapping.get(field, "")
-        mapping[field] = st.selectbox(
-            f"{field} に対応する列",
-            cols,
-            index=cols.index(default) if default in cols else 0,
-            key=f"map_{field}",
-        )
+for field in std_fields:
+    default = default_mapping.get(field, "")
+    key = f"map_{field}"
+    if key not in st.session_state:
+        st.session_state[key] = default
+    mapping[field] = st.session_state[key]
 
 norm_df = normalize_df(raw_df, mapping)
 
@@ -193,13 +189,10 @@ if submitted or any([keyword, title_q, author_q, year_from, year_to, publisher_q
 
 limit = int(search_cfg.get("default_limit", 200))
 
-st.subheader("検索結果")
-st.write(f"{len(search_df)} 件")
-
 result_df = search_df.head(limit).drop(columns=["raw_text"], errors="ignore")
-st.dataframe(result_df, use_container_width=True, height=420)
 
-# --- Download ---
+text_data = None
+buffer = None
 if not result_df.empty:
     buffer = io.BytesIO()
     result_df.to_excel(buffer, index=False)
@@ -211,18 +204,37 @@ if not result_df.empty:
         text_lines.append(line)
     text_data = "\n".join(text_lines).encode("utf-8")
 
-    c1, c2 = st.columns(2)
-    with c1:
+header_col, btn1_col, btn2_col = st.columns([6, 2, 2])
+with header_col:
+    st.subheader("検索結果")
+    st.write(f"{len(search_df)} 件")
+with btn1_col:
+    if text_data is not None:
         st.download_button(
             "テキストでダウンロード",
             data=text_data,
             file_name="search_results.txt",
             mime="text/plain",
         )
-    with c2:
+with btn2_col:
+    if buffer is not None:
         st.download_button(
             "Excelでダウンロード",
             data=buffer,
             file_name="search_results.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
+st.dataframe(result_df, use_container_width=True, height=420)
+
+# --- Column mapping (below results) ---
+with st.expander("列マッピング（基本的には触らない）", expanded=False):
+    for field in std_fields:
+        cols = [""] + raw_df.columns.tolist()
+        current = st.session_state.get(f"map_{field}", "")
+        st.selectbox(
+            f"{field} に対応する列",
+            cols,
+            index=cols.index(current) if current in cols else 0,
+            key=f"map_{field}",
         )
