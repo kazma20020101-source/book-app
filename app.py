@@ -136,8 +136,8 @@ with st.form("search_form"):
         title_q = st.text_input("書名")
         author_q = st.text_input("著者")
     with c2:
-        year_from = st.text_input("出版年（開始）")
-        year_to = st.text_input("出版年（終了）")
+        year_from = st.text_input("出版年（開始）", placeholder="半角数字で入力")
+        year_to = st.text_input("出版年（終了）", placeholder="半角数字で入力")
         publisher_q = st.text_input("出版社")
     with c3:
         sort_key = st.selectbox(
@@ -198,9 +198,21 @@ if not result_df.empty:
     result_df.to_excel(buffer, index=False)
     buffer.seek(0)
 
+    special_stems_double = {"リテラボ図書アプリ用", "リテラボ紀要アプリ用"}
+    special_stems_single = {"日本考古学アプリ用"}
+    if selected_file.stem in special_stems_double:
+        left_bracket, right_bracket = "『", "』"
+    elif selected_file.stem in special_stems_single:
+        left_bracket, right_bracket = "「", "」"
+    else:
+        left_bracket, right_bracket = "「", "」"
+
     text_lines = []
     for _, row in result_df.iterrows():
-        line = f"{row.get('title','')} / {row.get('author','')} / {row.get('year','')} / {row.get('location','')}"
+        author = str(row.get("author", "") or "").strip()
+        year = str(row.get("year", "") or "").strip()
+        title = str(row.get("title", "") or "").strip()
+        line = f"{author}、{year}、{left_bracket}{title}{right_bracket}"
         text_lines.append(line)
     text_data = "\n".join(text_lines).encode("utf-8")
 
@@ -226,6 +238,15 @@ with btn2_col:
         )
 
 st.dataframe(result_df, use_container_width=True, height=420)
+
+# --- Copyable text (author,year,title) ---
+if text_data is not None:
+    st.caption("コピー用テキスト（author,year,「title」）")
+    st.text_area(
+        "コピー用",
+        value=text_data.decode("utf-8"),
+        height=160,
+    )
 
 # --- Column mapping (below results) ---
 with st.expander("列マッピング（基本的には触らない）", expanded=False):
