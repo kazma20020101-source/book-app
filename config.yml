@@ -1,0 +1,40 @@
+app:
+  title: "考古学研究室リテラボ蔵書アプリ"
+  description: "蔵書の検索と関連図書の提案を行うアプリです。"
+
+auth:
+  enabled: false
+  password_key: "APP_PASSWORD"
+
+data:
+  directory: "data"
+  allowed_extensions: [".csv", ".xlsx", ".xls"]
+  encoding: "utf-8"
+
+search:
+  default_limit: 200
+
+schema:
+  # 標準フィールド名
+  fields:
+    - id
+    - title
+    - author
+    - year
+    - publisher
+    - location
+    - call_number
+    - keywords
+    - notes
+  # 既存データの列名に合わせて UI でマッピングする
+  # 初期値は一般的な日本語列名を想定
+  default_column_mapping:
+    id: ["ID", "id", "管理番号"]
+    title: ["タイトル", "書名", "title"]
+    author: ["著者・編者", "著者", "author"]
+    year: ["出版年", "年", "year"]
+    publisher: ["出版元", "出版社", "publisher"]
+    location: ["所在", "場所", "location"]
+    call_number: ["巻数", "請求記号", "分類", "call_number"]
+    keywords: ["キーワード", "keywords", "タグ"]
+    notes: ["備考", "注記", "notes"]
