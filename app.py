@@ -75,6 +75,13 @@ schema_cfg = config.get("schema", {})
 st.title(app_cfg.get("title", "考古学研究室OPAC"))
 st.caption(app_cfg.get("description", "名古屋大学考古学研究室の蔵書検索・論文検索アプリです。"))
 
+# --- Mode selection ---
+mode = st.radio(
+    "検索モード",
+    ["図書・紀要検索", "論文検索"],
+    horizontal=True,
+)
+
 # --- Authentication ---
 auth_enabled = bool(auth_cfg.get("enabled", False))
 if auth_enabled:
@@ -96,11 +103,14 @@ if auth_enabled:
 
 # --- Data selection ---
 allowed_exts = data_cfg.get("allowed_extensions", [".csv", ".xlsx", ".xls"])
-data_dir = Path(data_cfg.get("directory", "data"))
+if mode == "論文検索":
+    data_dir = Path(data_cfg.get("directory_papers", "data/papers"))
+else:
+    data_dir = Path(data_cfg.get("directory_books", "data/books"))
 files = list_data_files(data_dir, allowed_exts)
 
 if not files:
-    st.warning("`data/` にCSVまたはExcelファイルを置いてください。")
+    st.warning("選択中のフォルダにCSVまたはExcelファイルを置いてください。")
     st.stop()
 
 selected_file = st.selectbox("データファイルを選択", files, format_func=lambda p: p.name)
@@ -198,12 +208,8 @@ if not result_df.empty:
     result_df.to_excel(buffer, index=False)
     buffer.seek(0)
 
-    special_stems_double = {"リテラボ図書アプリ用", "リテラボ紀要アプリ用"}
-    special_stems_single = {"日本考古学アプリ用"}
-    if selected_file.stem in special_stems_double:
+    if mode == "図書・紀要検索":
         left_bracket, right_bracket = "『", "』"
-    elif selected_file.stem in special_stems_single:
-        left_bracket, right_bracket = "「", "」"
     else:
         left_bracket, right_bracket = "「", "」"
 

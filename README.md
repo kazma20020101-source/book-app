@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 2) データを配置
 
-`data/` に CSV または Excel を配置します。
+`data/books/` または `data/papers/` に CSV または Excel を配置します。
 
 3) 起動
 
