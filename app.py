@@ -1,5 +1,4 @@
 import io
-import os
 from pathlib import Path
 from typing import Dict, List
 
@@ -67,7 +66,6 @@ st.set_page_config(page_title="考古学研究室OPAC", layout="wide")
 
 config = load_config()
 app_cfg = config.get("app", {})
-auth_cfg = config.get("auth", {})
 data_cfg = config.get("data", {})
 search_cfg = config.get("search", {})
 schema_cfg = config.get("schema", {})
@@ -81,25 +79,6 @@ mode = st.radio(
     ["図書・紀要検索", "論文検索", "報告書検索"],
     horizontal=True,
 )
-
-# --- Authentication ---
-auth_enabled = bool(auth_cfg.get("enabled", False))
-if auth_enabled:
-    pw_key = auth_cfg.get("password_key", "APP_PASSWORD")
-    expected = st.secrets.get(pw_key) or os.getenv(pw_key)
-    if not expected:
-        st.error("パスワードが設定されていません。`.streamlit/secrets.toml` に設定してください。")
-        st.stop()
-    if "auth_ok" not in st.session_state:
-        st.session_state.auth_ok = False
-    if not st.session_state.auth_ok:
-        pw = st.text_input("パスワード", type="password")
-        if pw and pw == expected:
-            st.session_state.auth_ok = True
-            st.success("認証に成功しました。")
-        elif pw:
-            st.error("パスワードが違います。")
-        st.stop()
 
 # --- Data selection ---
 allowed_exts = data_cfg.get("allowed_extensions", [".csv", ".xlsx", ".xls"])

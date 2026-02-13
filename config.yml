@@ -2,9 +2,6 @@ app:
   title: "考古学研究室OPAC"
   description: "名古屋大学考古学研究室の蔵書検索・論文検索を行うアプリです。"
 
-auth:
-  enabled: false
-  password_key: "APP_PASSWORD"
 
 data:
   directory_books: "data/books"
