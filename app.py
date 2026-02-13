@@ -78,7 +78,7 @@ st.caption(app_cfg.get("description", "名古屋大学考古学研究室の蔵�
 # --- Mode selection ---
 mode = st.radio(
     "検索モード",
-    ["図書・紀要検索", "論文検索"],
+    ["図書・紀要検索", "論文検索", "報告書検索"],
     horizontal=True,
 )
 
@@ -105,6 +105,8 @@ if auth_enabled:
 allowed_exts = data_cfg.get("allowed_extensions", [".csv", ".xlsx", ".xls"])
 if mode == "論文検索":
     data_dir = Path(data_cfg.get("directory_papers", "data/papers"))
+elif mode == "報告書検索":
+    data_dir = Path(data_cfg.get("directory_reports", "data/reports"))
 else:
     data_dir = Path(data_cfg.get("directory_books", "data/books"))
 files = list_data_files(data_dir, allowed_exts)

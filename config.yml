@@ -9,6 +9,7 @@ auth:
 data:
   directory_books: "data/books"
   directory_papers: "data/papers"
+  directory_reports: "data/reports"
   allowed_extensions: [".csv", ".xlsx", ".xls"]
   encoding: "utf-8"
 
