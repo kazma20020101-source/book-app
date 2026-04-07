@@ -104,6 +104,18 @@ def load_raw_df(path: Path, encoding: str) -> pd.DataFrame:
 raw_df = load_raw_df(selected_file, data_cfg.get("encoding", "utf-8"))
 
 # --- Column mapping ---
+if "mapping_initialized" not in st.session_state:
+    st.session_state.update({
+        "map_id": "棚ID",
+        "map_location": "棚位置",
+        "map_title": "タイトル",
+        "map_call number": "巻数",
+        "map_author": "著者・編者",
+        "map_year": "出版年",
+        "map_publisher": "出版元"
+    })
+    st.session_state["mapping_initialized"] 
+
 std_fields = schema_cfg.get("fields", [])
 if not std_fields:
     std_fields = raw_df.columns.tolist()
