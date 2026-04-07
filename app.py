@@ -194,6 +194,18 @@ limit = int(search_cfg.get("default_limit", 200))
 
 result_df = search_df.head(limit).drop(columns=["raw_text"], errors="ignore")
 
+# カラム順を指定
+desired_order = ["id", "location", "title", "author", "year", "publisher"]
+
+# 存在するカラムだけ抽出（エラー防止）
+cols = [c for c in desired_order if c in result_df.columns]
+
+# 残りのカラム（指定してないやつ）
+other_cols = [c for c in result_df.columns if c not in cols]
+
+# 並べ替え
+result_df = result_df[cols + other_cols]
+
 text_data = None
 buffer = None
 if not result_df.empty:
