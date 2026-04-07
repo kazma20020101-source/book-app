@@ -109,12 +109,12 @@ if "mapping_initialized" not in st.session_state:
         "map_id": "棚ID",
         "map_location": "棚位置",
         "map_title": "タイトル",
-        "map_call number": "巻数",
+        "map_call_number": "巻数",
         "map_author": "著者・編者",
         "map_year": "出版年",
         "map_publisher": "出版元"
     })
-    st.session_state["mapping_initialized"] 
+    st.session_state["mapping_initialized"] =True
 
 std_fields = schema_cfg.get("fields", [])
 if not std_fields:
